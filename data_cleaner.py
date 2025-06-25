@@ -1,43 +1,39 @@
 import csv
 
-COUNTRIES = {
+countries = [
     "America", "India", "China", "Germany", "France", "Japan", "Canada",
     "Russia", "Brazil", "Italy", "Australia", "England", "Pakistan",
     "Bangladesh", "Mexico", "Nepal", "Afghanistan", "Sri Lanka", "Norway",
     "Spain", "Korea", "USA", "UK", "UAE", "South Africa"
-}
+]
 
 input_file = "data/ner_dataset_corrected.csv"
 output_file = "data/ner_dataset_newcorrected.csv"
 
-with(
-    open(input_file, "r") as infile,
-    open(output_file, "w", newline='') as outfile
-):
-    
-    reader = csv.reader(infile)
-    writer = csv.writer(outfile)
+infile = open(input_file, "r", encoding="utf-8")
+outfile = open(output_file, "w", newline='', encoding="utf-8")
 
+reader = csv.reader(infile)
+writer = csv.writer(outfile)
 
-    header = next(reader)
-    writer.writerow(header)
+header = next(reader)
+writer.writerow(header)
 
-    for row in reader:
-        if len(row) == 4:
-            sentence_id, word, pos, tag = row
-            clean_word = word.strip()
+for row in reader:
+    if len(row) == 4:
+        word = row[1].strip() 
+        tag = row[3]
 
-            if clean_word in COUNTRIES:
-                if "ORG" in tag or "PER" in tag or "MISC" in tag:
-                    print(f"Fixing tag: {clean_word} -> {tag} to B-LOC/I-LOC")
-                    if tag.startswith("B-"):
-                        tag = "B-LOC"
-                    elif tag.startswith("I-"):
-                        tag = "I-LOC"
-                    else:
-                        tag = "B-LOC"  
-                    row[3] = tag
+        if word in countries and ("ORG" in tag or "PER" in tag or "MISC" in tag):
+            print("Fixing tag for:", word)
+            if tag.startswith("I-"):
+                row[3] = "I-LOC"
+            else:
+                row[3] = "B-LOC"
 
-        writer.writerow(row)
+    writer.writerow(row)
 
-print(f"Correction complete. Cleaned file saved as: {output_file}")
+infile.close()
+outfile.close()
+
+print("New file saved as:", output_file)
