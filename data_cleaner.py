@@ -10,8 +10,10 @@ COUNTRIES = {
 input_file = "data/ner_dataset_corrected.csv"
 output_file = "data/ner_dataset_newcorrected.csv"
 
-with open(input_file, "r") as infile, \
-     open(output_file, "w", newline='') as outfile:
+with(
+    open(input_file, "r") as infile,
+    open(output_file, "w", newline='') as outfile
+);
     
     reader = csv.reader(infile)
     writer = csv.writer(outfile)
